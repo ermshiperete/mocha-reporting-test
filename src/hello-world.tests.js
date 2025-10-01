@@ -1,7 +1,7 @@
 import 'mocha';
 import { assert } from 'chai';
 
-describe('top level suite', () => {
+describe('top level suite', function () {
   this.timeout(5000);
   describe("example", () => {
     it("2 + 2", () => {
