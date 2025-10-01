@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ "${#}" -gt 0 && "$1" != "test" ]]; then
     echo "Only supported option is 'test'"
