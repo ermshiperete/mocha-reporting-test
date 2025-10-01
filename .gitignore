@@ -1,0 +1,188 @@
+/windows/bin/
+/windows/build/
+/windows/debug/
+/windows/lib/
+/windows/release/
+/windows/src/**/*.err
+/windows/src/**/*.Build.CppClean.log
+/windows/src/**/*.dproj.local
+/windows/src/**/*.groupproj.local
+/windows/src/**/*.bdsproj.local
+/windows/src/**/*.stat
+/windows/src/**/*.hpp
+/windows/src/**/*.sdf
+/windows/src/**/error.log
+/windows/src/**/.vs/
+/windows/src/**/version.RES
+/windows/src/**/__history/
+/windows/src/**/__recovery/
+/windows/src/**/*.identcache
+/windows/src/**/*.vcxproj.user
+/windows/src/**/version.res
+/windows/src/**/*.pch
+/windows/src/**/*.wixobj
+/windows/src/**/*.sbr
+/windows/src/**/*.bsc
+/windows/src/**/*.dll.embed.manifest
+/windows/src/**/*.ilk
+/windows/src/**/*.log
+/windows/src/**/*.idb
+/windows/src/**/*.suo
+/windows/src/**/.idea
+/common/windows/delphi/**/*.dcu
+/common/windows/delphi/**/*.dcp
+/common/windows/delphi/**/*.drc
+/common/windows/delphi/**/*.bpl
+/common/windows/delphi/**/*.map
+/common/windows/delphi/**/*.tds
+/common/windows/delphi/**/*.identcache
+
+# Temp files generated during release build
+/windows/src/buildtools/inst/copydebug.mak
+/windows/src/desktop/inst/desktop_resources.res
+/windows/src/desktop/inst/desktopui.wxs
+
+# local defines for build, usually used for certificates and passwords
+/windows/src/UserDefines.mak
+
+# messages -- we now include these as they are currently not autogen
+# /global/delphi/cust/messagedefaults.pas
+# /global/delphi/cust/messageidentifierconsts.pas
+
+# global build files
+/windows/src/global/help/version.out
+/windows/src/global/delphi/general/SourceRootPath.pas
+
+# /buildtools/genkmnp/
+/windows/src/buildtools/genkmnp/*.identcache
+
+# /buildtools/inst/
+/windows/src/buildtools/inst/srcbackup.mak
+
+# /desktop/branding/
+/windows/src/desktop/branding/desktop_pro.pxx
+
+# /desktop/inst/
+/windows/src/desktop/inst/*.wixpdb
+/windows/src/desktop/inst/*.msi
+/windows/src/desktop/inst/download.mak
+
+# /desktop/setup/
+/windows/src/desktop/setup/keymandesktop80.msi
+
+# /developer/TIKE/
+/windows/src/developer/TIKE/stock.kct
+
+# /developer/TIKE/redist/
+/windows/src/developer/TIKE/redist/Addins
+/windows/src/developer/TIKE/redist/Desktop
+/windows/src/developer/TIKE/redist/UI
+
+# /developer/inst/
+/windows/src/developer/inst/*.wixpdb
+/windows/src/developer/inst/download.mak
+/windows/src/developer/inst/copydev.mak
+
+/windows/src/developer/stock/stock.kct
+/windows/src/developer/uitemplates/keyman.kct
+
+# /engine/inst/
+/windows/src/engine/inst/*.wixpdb
+/windows/src/engine/inst/download.mak
+
+# /engine/inst/insthelper/
+/windows/src/engine/inst/insthelper/ModelSupport_insthelper
+/windows/src/engine/inst/keymanengine.msm
+
+# /engine/keyman/langswitch/
+/windows/src/engine/keyman/langswitch/__history
+
+# /engine/keyman32/
+/windows/src/engine/keyman32/Keyman32.opensdf
+/windows/src/engine/keyman32/*.obj
+/windows/src/engine/keyman32/*.cod
+/windows/src/engine/keyman32/*.pdb
+
+# /engine/keymanx64/
+/windows/src/engine/keymanx64/x64
+
+# /engine/kmcomapi/
+/windows/src/engine/kmcomapi/kmcomapi.tlb
+
+# /engine/tsysinfo/
+/windows/src/engine/tsysinfo/tsysinfo_x64.res
+/windows/src/engine/tsysinfo/tsysinfox64.bin
+
+# /engine/tsysinfox64/
+/windows/src/engine/tsysinfox64/x64
+
+# /support/NetInputBoxTest/NetInputBoxTest/
+/windows/src/support/NetInputBoxTest/NetInputBoxTest/bin
+/windows/src/support/NetInputBoxTest/NetInputBoxTest/obj
+
+# /support/unload_keyboards/
+/windows/src/support/unload_keyboards/Win64
+
+# /test/test_i2908/i2908/
+/windows/src/test/test_i2908/i2908/Debug
+
+# /test/test_i2934/test_i2934/
+/windows/src/test/test_i2934/test_i2934/Debug
+
+# /test/test_i3317/
+/windows/src/test/test_i3317/*.json
+/windows/src/test/test_i3317/*.js
+
+# /test/test_i3633
+/windows/src/test/test_i3633/sig?
+
+# VS Code
+.vscode/
+.vs/
+.devcontainer/
+
+# IDE files
+**/.idea/**/*.xml
+**/.idea/**/*.iml
+
+.DS_Store
+
+*.kpj.user
+
+# Atom/Nuclide
+compile_flags.txt
+
+# Auto-generated resource script for xcode
+resources/build/mac/xcode-environment.inc.sh
+
+# Copy of the master VERSION.md used for Linux packaging
+/core/VERSION.md
+
+**/node_modules/
+tsconfig.tsbuildinfo
+
+# Windows system files
+Thumbs.db
+
+# Temporary file for logging scripts in xcode runs, see builder-basic.inc.sh for
+# details
+/xcodebuild-scripts.log
+
+#
+# Code coverage tools for JS/TS - nyc and c8
+#
+.nyc_output/
+lcov-report/
+lcov.info
+
+# Linux packaging related
+/debian/
+/results/
+/keyman*.deb
+/keyman*.ddeb
+/keyman*.buildinfo
+/keyman*.changes
+/keyman*.tar.?z
+
+# flag file for build script
+.configured
