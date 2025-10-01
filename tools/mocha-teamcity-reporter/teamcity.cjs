@@ -7,16 +7,16 @@
 'use strict';
 
 const processPID = process.pid.toString();
-const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s' flowId='%s']`;
-const SUITE_START = `##teamcity[testSuiteStarted name='%s' flowId='%s']`;
-const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s' flowId='%s']`;
-const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s' flowId='%s']`;
-const TEST_START = `##teamcity[testStarted name='%s' flowId='%s']`;
-const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' flowId='%s']`;
+const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s']`;
+const SUITE_START = `##teamcity[testSuiteStarted name='%s']`;
+const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s']`;
+const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s']`;
+const TEST_START = `##teamcity[testStarted name='%s']`;
+const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s']`;
 const TEST_FAILED_COMPARISON = `##teamcity[testFailed type='comparisonFailure' name='%s' message='%s' \
-details='%s' actual='%s' expected='%s' flowId='%s']`;
-const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
-const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
+details='%s' actual='%s' expected='%s']`;
+const TEST_END = `##teamcity[testFinished name='%s' duration='%s']`;
+const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
 const FLOW_END = `##teamcity[flowFinished flowId='%s']`;
 
@@ -83,7 +83,7 @@ function formatString() {
 	return util.format.apply(util, formattedArguments);
 }
 
-function handleFlow(isStarted, flowId, parentFlowId) {
+function handleFlow(isStarted, parentFlowId) {
 	if (!parentFlowId) {
 		return;
   }
@@ -142,23 +142,23 @@ function Teamcity(runner, options) {
 	const testState = { pending: 0 };
 
 	runner.on(EVENT_SUITE_BEGIN, function (suite) {
-    handleFlow(true, getFlowId(), parentFlowId);
+    handleFlow(true, parentFlowId);
 		if (suite.root) {
 			if (topLevelSuite) {
-				log(formatString(SUITE_START, topLevelSuite, getFlowId()));
+				log(formatString(SUITE_START, topLevelSuite));
 			}
 			return;
 		}
 		suite.startDate = new Date();
-		log(formatString(SUITE_START, suite.title, getFlowId()));
+		log(formatString(SUITE_START, suite.title));
 	});
 
 	runner.on(EVENT_TEST_BEGIN, function (test) {
 		if (displayIgnoredAsIgnored && ignoredTests[`${test.title}-${getFlowId()}`] === testState.pending) {
 			return;
 		}
-    handleFlow(true, getFlowId(), parentFlowId);
-		log(formatString(TEST_START, test.title, getFlowId()));
+    handleFlow(true, parentFlowId);
+		log(formatString(TEST_START, test.title));
 	});
 
 	runner.on(EVENT_TEST_FAIL, function (test, err) {
@@ -200,7 +200,7 @@ function Teamcity(runner, options) {
 	});
 
 	runner.on(EVENT_TEST_PENDING, function (test) {
-		log(formatString(TEST_IGNORED, test.title, test.title, getFlowId()));
+		log(formatString(TEST_IGNORED, test.title, test.title));
 		if (displayIgnoredAsIgnored) {
 			ignoredTests[`${test.title}-${getFlowId()}`] = testState.pending;
 		}
@@ -212,11 +212,11 @@ function Teamcity(runner, options) {
 			return;
 		}
 		if(isNil(test.duration)){
-			log(formatString(TEST_END_NO_DURATION, test.title, getFlowId()));
+			log(formatString(TEST_END_NO_DURATION, test.title));
 		} else {
-			log(formatString(TEST_END, test.title, test.duration.toString(), getFlowId()));
+			log(formatString(TEST_END, test.title, test.duration.toString()));
 		}
-    handleFlow(false, getFlowId(), parentFlowId);
+    handleFlow(false, parentFlowId);
 	});
 
 	runner.on(EVENT_HOOK_BEGIN, function (test) {
@@ -239,8 +239,8 @@ function Teamcity(runner, options) {
 
 	runner.on(EVENT_SUITE_END, function (suite) {
 		if (suite.root) return;
-		log(formatString(SUITE_END, suite.title, new Date() - suite.startDate, getFlowId()));
-    handleFlow(false, getFlowId(), parentFlowId);
+		log(formatString(SUITE_END, suite.title, new Date() - suite.startDate));
+    handleFlow(false, parentFlowId);
 	});
 
 	runner.on(EVENT_RUN_END, function () {
@@ -248,9 +248,9 @@ function Teamcity(runner, options) {
 		(typeof stats === 'undefined') ? duration = null : duration = stats.duration;
 		if (topLevelSuite) {
 			isNil(duration)
-				? log(formatString(SUITE_END_NO_DURATION, topLevelSuite, getFlowId()))
-				: log(formatString(SUITE_END, topLevelSuite, duration, getFlowId()));
-      handleFlow(false, getFlowId(), parentFlowId);
+				? log(formatString(SUITE_END_NO_DURATION, topLevelSuite))
+				: log(formatString(SUITE_END, topLevelSuite, duration));
+      handleFlow(false, parentFlowId);
 		}
 	});
 }
