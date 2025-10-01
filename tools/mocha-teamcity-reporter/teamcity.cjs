@@ -129,24 +129,23 @@ function Teamcity(runner, options) {
 	const testState = { pending: 0 };
 
 	runner.on(EVENT_SUITE_BEGIN, function (suite) {
+    handleFlow(true, flowId, parentFlowId);
 		if (suite.root) {
 			if (topLevelSuite) {
 				log(formatString(SUITE_START, topLevelSuite, flowId));
-				handleFlow(true, flowId, parentFlowId);
 			}
 			return;
 		}
 		suite.startDate = new Date();
 		log(formatString(SUITE_START, suite.title, flowId));
-		handleFlow(true, flowId, parentFlowId);
 	});
 
 	runner.on(EVENT_TEST_BEGIN, function (test) {
 		if (displayIgnoredAsIgnored && ignoredTests[`${test.title}-${flowId}`] === testState.pending) {
 			return;
 		}
+    handleFlow(true, flowId, parentFlowId);
 		log(formatString(TEST_START, test.title, flowId));
-		handleFlow(true, flowId, parentFlowId);
 	});
 
 	runner.on(EVENT_TEST_FAIL, function (test, err) {
@@ -177,12 +176,12 @@ function Teamcity(runner, options) {
 		// Log testFinished for failed hook (hook end event is not fired for failed hook)
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
 			if (isHook) {
-				handleFlow(false, hookFlowId, parentFlowId);
 				if(isNil(test.duration)){
 					log(formatString(TEST_END_NO_DURATION, test.title, hookFlowId));
 				} else {
 					log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
 				}
+        handleFlow(false, hookFlowId, parentFlowId);
 			}
 		}
 	});
@@ -199,46 +198,46 @@ function Teamcity(runner, options) {
 			delete ignoredTests[`${test.title}-${flowId}`];
 			return;
 		}
-		handleFlow(false, flowId, parentFlowId);
 		if(isNil(test.duration)){
 			log(formatString(TEST_END_NO_DURATION, test.title, flowId));
 		} else {
 			log(formatString(TEST_END, test.title, test.duration.toString(), flowId));
 		}
+    handleFlow(false, flowId, parentFlowId);
 	});
 
 	runner.on(EVENT_HOOK_BEGIN, function (test) {
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
+      handleFlow(true, hookFlowId, parentFlowId);
 			log(formatString(TEST_START, test.title, hookFlowId));
-			handleFlow(true, hookFlowId, parentFlowId);
 		}
 	});
 
 	runner.on(EVENT_HOOK_END, function (test) {
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
-			handleFlow(false, hookFlowId, parentFlowId);
 			if(isNil(test.duration)){
 				log(formatString(TEST_END_NO_DURATION, test.title, hookFlowId));
 			} else {
 				log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
 			}
+      handleFlow(false, hookFlowId, parentFlowId);
 		}
 	});
 
 	runner.on(EVENT_SUITE_END, function (suite) {
 		if (suite.root) return;
-		handleFlow(false, flowId, parentFlowId);
 		log(formatString(SUITE_END, suite.title, new Date() - suite.startDate, flowId));
+    handleFlow(false, flowId, parentFlowId);
 	});
 
 	runner.on(EVENT_RUN_END, function () {
 		let duration;
 		(typeof stats === 'undefined') ? duration = null : duration = stats.duration;
 		if (topLevelSuite) {
-			handleFlow(false, flowId, parentFlowId);
 			isNil(duration)
 				? log(formatString(SUITE_END_NO_DURATION, topLevelSuite, flowId))
 				: log(formatString(SUITE_END, topLevelSuite, duration, flowId));
+      handleFlow(false, flowId, parentFlowId);
 		}
 	});
 }
