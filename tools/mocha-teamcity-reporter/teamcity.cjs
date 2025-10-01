@@ -7,16 +7,16 @@
 'use strict';
 
 const processPID = process.pid.toString();
-const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s']`;
-const SUITE_START = `##teamcity[testSuiteStarted name='%s']`;
-const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s']`;
-const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s']`;
-const TEST_START = `##teamcity[testStarted name='%s' captureStandardOutput='true']`;
-const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' captureStandardOutput='true']`;
+const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s' flowId='%s']`;
+const SUITE_START = `##teamcity[testSuiteStarted name='%s' flowId='%s']`;
+const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s' flowId='%s']`;
+const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s' flowId='%s']`;
+const TEST_START = `##teamcity[testStarted name='%s' flowId='%s']`;
+const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' flowId='%s']`;
 const TEST_FAILED_COMPARISON = `##teamcity[testFailed type='comparisonFailure' name='%s' message='%s' \
-details='%s' captureStandardOutput='true' actual='%s' expected='%s']`;
-const TEST_END = `##teamcity[testFinished name='%s' duration='%s']`;
-const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s']`;
+details='%s' actual='%s' expected='%s' flowId='%s']`;
+const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
+const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
 const FLOW_END = `##teamcity[flowFinished flowId='%s']`;
 
