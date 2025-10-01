@@ -38,9 +38,13 @@ const util = require('util');
 let Base, log, logError;
 
 Base = require('mocha').reporters.Base;
-log = console.log;
+log = myLog;  //console.log;
 logError = console.error;
 
+function myLog(msg) {
+  console.log(msg);
+  console.log(msg.substring(2));
+}
 /**
  * Escape the given `str`.
  */
@@ -116,7 +120,9 @@ function Teamcity(runner, options) {
 	Base.call(this, runner);
 	let stats = this.stats;
 	const topLevelSuite = reporterOptions.topLevelSuite || process.env['MOCHA_TEAMCITY_TOP_LEVEL_SUITE'];
-	const parentFlowId = reporterOptions.parentFlowId || process.env['MOCHA_TEAMCITY_PARENT_FLOW_ID'];
+  const parentFlowId = reporterOptions.parentFlowId || process.env['MOCHA_TEAMCITY_PARENT_FLOW_ID'];
+
+  console.log(`parentFlowId: ${parentFlowId}`);
 
 	const hookFlowId = `${flowId}_hook`;
 	const ignoredTests = {};
