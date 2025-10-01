@@ -18,7 +18,7 @@ details='%s' captureStandardOutput='true' actual='%s' expected='%s' flowId='%s']
 const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
 const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
-const FLOW_END = `##teamcity[flowFinished flowId='%s' parent='%s']`;
+const FLOW_END = `##teamcity[flowFinished flowId='%s']`;
 
 const Mocha = require('mocha');
 const {
@@ -88,7 +88,7 @@ function handleFlow(isStarted, flowId, parentFlowId) {
 	if (isStarted) {
 		log(formatString(FLOW_START, flowId, parentFlowId));
 	} else {
-		log(formatString(FLOW_END, flowId, parentFlowId));
+		log(formatString(FLOW_END, flowId));
 	}
 }
 

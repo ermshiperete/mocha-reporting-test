@@ -12,8 +12,8 @@ MOCHA_FLAGS=()
 echo "TEAMCITY_GIT_PATH=${TEAMCITY_GIT_PATH}"
 
 if [[ -v TEAMCITY_GIT_PATH ]]; then
-  MOCHA_FLAGS+=(--reporter "$(dirname "$0")/tools/mocha-teamcity-reporter/teamcity.cjs")
-  # MOCHA_FLAGS+=(--reporter "$(dirname "$0")/tools/mocha-teamcity-reporter/teamcity.cjs" --reporter-options parentFlowId="unit_tests")
+  # MOCHA_FLAGS+=(--reporter "$(dirname "$0")/tools/mocha-teamcity-reporter/teamcity.cjs")
+  MOCHA_FLAGS+=(--reporter "$(dirname "$0")/tools/mocha-teamcity-reporter/teamcity.cjs" --reporter-options parentFlowId="unit_tests")
   echo "##teamcity[flowStarted flowId='unit_tests']"
 fi
 
