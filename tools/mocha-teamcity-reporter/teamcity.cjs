@@ -19,8 +19,8 @@ const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
 const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
 const FLOW_END = `##teamcity[flowFinished flowId='%s']`;
-const TEST_STDOUT = `##teamcity[testStdOut name='%s' out='stdout']`;
-const TEST_STDERR = `##teamcity[testStdErr name='%s' out='stderr']`;
+const TEST_STDOUT = `##teamcity[testStdOut name='%s' out='text']`;
+const TEST_STDERR = `##teamcity[testStdErr name='%s' out='error text']`;
 
 const Mocha = require('mocha');
 const {
