@@ -7,19 +7,20 @@
 'use strict';
 
 const processPID = process.pid.toString();
-const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s']`;
-const SUITE_START = `##teamcity[testSuiteStarted name='%s']`;
-const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s']`;
-const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s']`;
-const TEST_START = `##teamcity[testStarted name='%s' captureStandardOutput='true']`;
-const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' captureStandardOutput='true']`;
+const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s' flowId='%s']`;
+const SUITE_START = `##teamcity[testSuiteStarted name='%s' flowId='%s']`;
+const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s' flowId='%s']`;
+const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s' flowId='%s']`;
+const TEST_START = `##teamcity[testStarted name='%s' flowId='%s' captureStandardOutput='true']`;
+const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' flowId='%s' captureStandardOutput='true']`;
 const TEST_FAILED_COMPARISON = `##teamcity[testFailed type='comparisonFailure' name='%s' message='%s' \
-details='%s' captureStandardOutput='true' actual='%s' expected='%s']`;
-const TEST_END = `##teamcity[testFinished name='%s' duration='%s']`;
-const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s']`;
+details='%s' captureStandardOutput='true' actual='%s' expected='%s' flowId='%s']`;
+const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
+const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
 const FLOW_END = `##teamcity[flowFinished flowId='%s']`;
 
+const { get } = require('http');
 const Mocha = require('mocha');
 const {
 	EVENT_SUITE_BEGIN,
@@ -146,12 +147,12 @@ function Teamcity(runner, options) {
     handleFlow(true, parentFlowId);
 		if (suite.root) {
 			if (topLevelSuite) {
-				log(formatString(SUITE_START, topLevelSuite));
+				log(formatString(SUITE_START, topLevelSuite, getFlowId()));
 			}
 			return;
 		}
 		suite.startDate = new Date();
-		log(formatString(SUITE_START, suite.title));
+		log(formatString(SUITE_START, suite.title, getFlowId()));
 	});
 
 	runner.on(EVENT_TEST_BEGIN, function (test) {
@@ -160,7 +161,7 @@ function Teamcity(runner, options) {
 			return;
 		}
     handleFlow(true, parentFlowId);
-		log(formatString(TEST_START, test.title));
+		log(formatString(TEST_START, test.title, getFlowId()));
 	});
 
   runner.on(EVENT_TEST_FAIL, function (test, err) {
@@ -174,28 +175,27 @@ function Teamcity(runner, options) {
 			isHook = true;
 		}
 
-		const testFlowId = (isHook) ? hookFlowId : getFlowId();
 		if(actualVsExpected && (err.actual && err.expected)){
 			if (useStdError) {
 				logError(formatString(TEST_FAILED_COMPARISON,
-					test.title, err.message, err.stack, err.actual, err.expected, testFlowId));
+					test.title, err.message, err.stack, err.actual, err.expected, getFlowId()));
 			} else {
-				log(formatString(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual, err.expected, testFlowId));
+				log(formatString(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual, err.expected, getFlowId()));
 			}
 		} else{
 			if (useStdError) {
-				logError(formatString(TEST_FAILED, test.title, err.message, err.stack, testFlowId));
+				logError(formatString(TEST_FAILED, test.title, err.message, err.stack, getFlowId()));
 			} else {
-				log(formatString(TEST_FAILED, test.title, err.message, err.stack, testFlowId));
+				log(formatString(TEST_FAILED, test.title, err.message, err.stack, getFlowId()));
 			}
 		}
 		// Log testFinished for failed hook (hook end event is not fired for failed hook)
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
 			if (isHook) {
 				if(isNil(test.duration)){
-					log(formatString(TEST_END_NO_DURATION, test.title, hookFlowId));
+					log(formatString(TEST_END_NO_DURATION, test.title, getFlowId()));
 				} else {
-					log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
+					log(formatString(TEST_END, test.title, test.duration.toString(), getFlowId()));
 				}
         handleFlow(false, parentFlowId);
 			}
@@ -204,7 +204,7 @@ function Teamcity(runner, options) {
 
   runner.on(EVENT_TEST_PENDING, function (test) {
     console.log('EVENT_TEST_PENDING');
-		log(formatString(TEST_IGNORED, test.title, test.title));
+		log(formatString(TEST_IGNORED, test.title, test.title, getFlowId()));
 		if (displayIgnoredAsIgnored) {
 			ignoredTests[`${test.title}-${getFlowId()}`] = testState.pending;
     } else {
@@ -221,9 +221,9 @@ function Teamcity(runner, options) {
 			return;
 		}
 		if(isNil(test.duration)){
-			log(formatString(TEST_END_NO_DURATION, test.title));
+			log(formatString(TEST_END_NO_DURATION, test.title, getFlowId()));
 		} else {
-			log(formatString(TEST_END, test.title, test.duration.toString()));
+			log(formatString(TEST_END, test.title, test.duration.toString(), getFlowId()));
 		}
     handleFlow(false, parentFlowId);
 	});
@@ -232,7 +232,7 @@ function Teamcity(runner, options) {
     console.log('EVENT_HOOK_BEGIN');
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
       handleFlow(true, parentFlowId);
-			log(formatString(TEST_START, test.title, hookFlowId));
+			log(formatString(TEST_START, test.title, getFlowId()));
 		}
 	});
 
@@ -240,9 +240,9 @@ function Teamcity(runner, options) {
     console.log('EVENT_HOOK_END');
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
 			if(isNil(test.duration)){
-				log(formatString(TEST_END_NO_DURATION, test.title, hookFlowId));
+				log(formatString(TEST_END_NO_DURATION, test.title, getFlowId()));
 			} else {
-				log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
+        log(formatString(TEST_END, test.title, test.duration.toString(), getFlowId()));
 			}
       handleFlow(false, parentFlowId);
 		}
@@ -251,7 +251,7 @@ function Teamcity(runner, options) {
   runner.on(EVENT_SUITE_END, function (suite) {
     console.log(`EVENT_SUITE_END: suite.root=${suite.root}`);
     if (!suite.root) {
-      log(formatString(SUITE_END, suite.title, new Date() - suite.startDate));
+      log(formatString(SUITE_END, suite.title, new Date() - suite.startDate), getFlowId());
     }
     handleFlow(false, parentFlowId);
 	});
@@ -262,8 +262,8 @@ function Teamcity(runner, options) {
 		(typeof stats === 'undefined') ? duration = null : duration = stats.duration;
 		if (topLevelSuite) {
 			isNil(duration)
-				? log(formatString(SUITE_END_NO_DURATION, topLevelSuite))
-				: log(formatString(SUITE_END, topLevelSuite, duration));
+        ? log(formatString(SUITE_END_NO_DURATION, topLevelSuite, getFlowId()))
+				: log(formatString(SUITE_END, topLevelSuite, duration, getFlowId()));
       handleFlow(false, parentFlowId);
 		}
 	});
