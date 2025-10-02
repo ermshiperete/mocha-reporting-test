@@ -250,8 +250,9 @@ function Teamcity(runner, options) {
 
   runner.on(EVENT_SUITE_END, function (suite) {
     console.log(`EVENT_SUITE_END: suite.root=${suite.root}`);
-		if (suite.root) return;
-		log(formatString(SUITE_END, suite.title, new Date() - suite.startDate));
+    if (!suite.root) {
+      log(formatString(SUITE_END, suite.title, new Date() - suite.startDate));
+    }
     handleFlow(false, parentFlowId);
 	});
 
