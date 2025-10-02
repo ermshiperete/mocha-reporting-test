@@ -203,10 +203,12 @@ function Teamcity(runner, options) {
 		log(formatString(TEST_IGNORED, test.title, test.title));
 		if (displayIgnoredAsIgnored) {
 			ignoredTests[`${test.title}-${getFlowId()}`] = testState.pending;
-		}
+    }
+    console.log(`EVENT_TEST_PENDING: displayIgnoredAsIgnored=${displayIgnoredAsIgnored}, ignoredTests=${JSON.stringify(ignoredTests)}`);
 	});
 
 	runner.on(EVENT_TEST_END, function (test) {
+    console.log(`EVENT_TEST_END: displayIgnoredAsIgnored=${displayIgnoredAsIgnored}, ignoredTests=${JSON.stringify(ignoredTests)}`);
 		if (displayIgnoredAsIgnored && ignoredTests[`${test.title}-${getFlowId()}`] === testState.pending) {
 			delete ignoredTests[`${test.title}-${getFlowId()}`];
 			return;
