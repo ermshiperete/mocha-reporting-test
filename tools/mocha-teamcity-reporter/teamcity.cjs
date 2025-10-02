@@ -11,10 +11,10 @@ const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s']`;
 const SUITE_START = `##teamcity[testSuiteStarted name='%s']`;
 const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s']`;
 const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s']`;
-const TEST_START = `##teamcity[testStarted name='%s']`;
-const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s']`;
+const TEST_START = `##teamcity[testStarted name='%s' captureStandardOutput='true']`;
+const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' captureStandardOutput='true']`;
 const TEST_FAILED_COMPARISON = `##teamcity[testFailed type='comparisonFailure' name='%s' message='%s' \
-details='%s' actual='%s' expected='%s']`;
+details='%s' captureStandardOutput='true' actual='%s' expected='%s']`;
 const TEST_END = `##teamcity[testFinished name='%s' duration='%s']`;
 const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s']`;
 const FLOW_START = `##teamcity[flowStarted flowId='%s' parent='%s']`;
