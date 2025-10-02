@@ -141,7 +141,8 @@ function Teamcity(runner, options) {
 	const ignoredTests = {};
 	const testState = { pending: 0 };
 
-	runner.on(EVENT_SUITE_BEGIN, function (suite) {
+  runner.on(EVENT_SUITE_BEGIN, function (suite) {
+    console.log('EVENT_SUITE_BEGIN');
     handleFlow(true, parentFlowId);
 		if (suite.root) {
 			if (topLevelSuite) {
@@ -154,6 +155,7 @@ function Teamcity(runner, options) {
 	});
 
 	runner.on(EVENT_TEST_BEGIN, function (test) {
+    console.log('EVENT_TEST_BEGIN');
 		if (displayIgnoredAsIgnored && ignoredTests[`${test.title}-${getFlowId()}`] === testState.pending) {
 			return;
 		}
@@ -161,7 +163,8 @@ function Teamcity(runner, options) {
 		log(formatString(TEST_START, test.title));
 	});
 
-	runner.on(EVENT_TEST_FAIL, function (test, err) {
+  runner.on(EVENT_TEST_FAIL, function (test, err) {
+    console.log('EVENT_TEST_FAIL');
 		let isHook = false;
 		if (test.title.includes(`"before all" hook`) ||
 			test.title.includes(`"before each" hook`) ||
@@ -199,7 +202,8 @@ function Teamcity(runner, options) {
 		}
 	});
 
-	runner.on(EVENT_TEST_PENDING, function (test) {
+  runner.on(EVENT_TEST_PENDING, function (test) {
+    console.log('EVENT_TEST_PENDING');
 		log(formatString(TEST_IGNORED, test.title, test.title));
 		if (displayIgnoredAsIgnored) {
 			ignoredTests[`${test.title}-${getFlowId()}`] = testState.pending;
@@ -209,7 +213,8 @@ function Teamcity(runner, options) {
     console.log(`EVENT_TEST_PENDING: displayIgnoredAsIgnored=${displayIgnoredAsIgnored}, ignoredTests=${JSON.stringify(ignoredTests)}`);
 	});
 
-	runner.on(EVENT_TEST_END, function (test) {
+  runner.on(EVENT_TEST_END, function (test) {
+    console.log('EVENT_TEST_END');
     console.log(`EVENT_TEST_END: displayIgnoredAsIgnored=${displayIgnoredAsIgnored}, ignoredTests=${JSON.stringify(ignoredTests)}`);
 		if (displayIgnoredAsIgnored && ignoredTests[`${test.title}-${getFlowId()}`] === testState.pending) {
 			delete ignoredTests[`${test.title}-${getFlowId()}`];
@@ -223,14 +228,16 @@ function Teamcity(runner, options) {
     handleFlow(false, parentFlowId);
 	});
 
-	runner.on(EVENT_HOOK_BEGIN, function (test) {
+  runner.on(EVENT_HOOK_BEGIN, function (test) {
+    console.log('EVENT_HOOK_BEGIN');
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
       handleFlow(true, parentFlowId);
 			log(formatString(TEST_START, test.title, hookFlowId));
 		}
 	});
 
-	runner.on(EVENT_HOOK_END, function (test) {
+  runner.on(EVENT_HOOK_END, function (test) {
+    console.log('EVENT_HOOK_END');
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
 			if(isNil(test.duration)){
 				log(formatString(TEST_END_NO_DURATION, test.title, hookFlowId));
@@ -241,13 +248,15 @@ function Teamcity(runner, options) {
 		}
 	});
 
-	runner.on(EVENT_SUITE_END, function (suite) {
+  runner.on(EVENT_SUITE_END, function (suite) {
+    console.log(`EVENT_SUITE_END: suite.root=${suite.root}`);
 		if (suite.root) return;
 		log(formatString(SUITE_END, suite.title, new Date() - suite.startDate));
     handleFlow(false, parentFlowId);
 	});
 
-	runner.on(EVENT_RUN_END, function () {
+  runner.on(EVENT_RUN_END, function () {
+    console.log('EVENT_RUN_END');
 		let duration;
 		(typeof stats === 'undefined') ? duration = null : duration = stats.duration;
 		if (topLevelSuite) {
