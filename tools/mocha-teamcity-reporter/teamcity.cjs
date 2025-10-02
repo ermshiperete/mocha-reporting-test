@@ -203,6 +203,8 @@ function Teamcity(runner, options) {
 		log(formatString(TEST_IGNORED, test.title, test.title));
 		if (displayIgnoredAsIgnored) {
 			ignoredTests[`${test.title}-${getFlowId()}`] = testState.pending;
+    } else {
+      handleFlow(true, parentFlowId);
     }
     console.log(`EVENT_TEST_PENDING: displayIgnoredAsIgnored=${displayIgnoredAsIgnored}, ignoredTests=${JSON.stringify(ignoredTests)}`);
 	});
