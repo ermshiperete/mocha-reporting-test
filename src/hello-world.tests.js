@@ -11,10 +11,19 @@ describe('top level suite', function () {
       assert.equal(20 + 2, 22);
     });
     it("4 + 2", () => {
-      assert.equal(4 + 2, 4);
+      assert.equal(4 + 2, 4); // failure
     });
     it("3 + 3", () => {
       assert.equal(3 + 3, 6);
     });
   });
 });
+
+// expected nesting:
+// unit_tests
+//   top level suite
+//     example
+//       2 + 2
+//       20 + 2 (skipped)
+//       4 + 2 (failed)
+//       3 + 3

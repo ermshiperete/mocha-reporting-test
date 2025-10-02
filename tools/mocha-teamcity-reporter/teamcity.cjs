@@ -194,7 +194,7 @@ function Teamcity(runner, options) {
 				} else {
 					log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
 				}
-        handleFlow(false, hookFlowId, parentFlowId);
+        handleFlow(false, parentFlowId);
 			}
 		}
 	});
@@ -221,7 +221,7 @@ function Teamcity(runner, options) {
 
 	runner.on(EVENT_HOOK_BEGIN, function (test) {
 		if (recordHookFailures && !ignoreHookWithName || recordHookFailures && ignoreHookWithName && !test.title.includes(ignoreHookWithName)) {
-      handleFlow(true, hookFlowId, parentFlowId);
+      handleFlow(true, parentFlowId);
 			log(formatString(TEST_START, test.title, hookFlowId));
 		}
 	});
@@ -233,7 +233,7 @@ function Teamcity(runner, options) {
 			} else {
 				log(formatString(TEST_END, test.title, test.duration.toString(), hookFlowId));
 			}
-      handleFlow(false, hookFlowId, parentFlowId);
+      handleFlow(false, parentFlowId);
 		}
 	});
 
